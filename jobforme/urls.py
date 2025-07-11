@@ -19,10 +19,10 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import render
-
+from django.views.generic import TemplateView
 
 urlpatterns = [
-    path('', lambda request: render(request, 'index.html'), name='home'),
+    path('', TemplateView.as_view(template_name='authuser/index.html'), name='home'),
     path('admin/', admin.site.urls),
     path('', include('authuser.urls')),
     path('', include('candidate.urls')),
