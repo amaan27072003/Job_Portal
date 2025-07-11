@@ -1,0 +1,13 @@
+{
+  "builds": [{
+    "src": "jobforme/wsgi.py",
+    "use": "@vercel/python",
+    "config": { "maxLambdaSize": "15mb", "runtime": "python3.8.2" }
+  }],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "jobforme/wsgi.py"
+    }
+  ]
+}
