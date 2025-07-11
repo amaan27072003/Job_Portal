@@ -22,7 +22,13 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 
 urlpatterns = [
-    path('', TemplateView.as_view(template_name='authuser/candidateregister.html'), name='home'),
+    path('', TemplateView.as_view(template_name='authuser/login.html'), name='home'),
+
+    path('authuser/', include('authuser.urls')),
+    path('candidate/', include('candidate.urls')),
+    path('hr/', include('hr.urls')),
+
+
     path('admin/', admin.site.urls),
     path('', include('authuser.urls')),
     path('', include('candidate.urls')),
