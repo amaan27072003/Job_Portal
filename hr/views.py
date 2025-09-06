@@ -1,7 +1,8 @@
-from django.shortcuts import render , redirect
+from django.shortcuts import render , redirect ,  get_object_or_404
 from hr.models import JobPost , CandidateApplication , SelectedCandidate , Hr
 from django.contrib.auth.decorators import login_required
 from candidate.models import isSortList
+from django.urls import reverse
 
 
 @login_required
@@ -30,51 +31,66 @@ def post_job_views(request):
     return render(request, 'hr/postjob.html', {'mssg': mssg})  
 
 @login_required
-def candidate_view(request,pk):
-    if JobPost.objects.filter(id=pk).exists():
-        job = JobPost.objects.get(id=pk)
-        applications = CandidateApplication.objects.filter(job=job)
-        selectedCandidate = SelectedCandidate.objects.filter(job=job)
-        print(selectedCandidate)
-        # return render(request, 'hr/candidate.html', {'applications': applications , 'selectedapplication': selectedCandidate, 'jobpost':job }) 
-        return render(request, 'hr/candidate.html', {'applications': applications,'job':job , 'selectedCandidate': selectedCandidate })
-    
-    return render('hr_dash')                                                 
-    # return redirect('hr_dash')
+def candidate_view(request, pk):
+    # This line attempts to get the JobPost or raises a 404 error if it doesn't exist
+    job = get_object_or_404(JobPost, id=pk)
+
+    applications = CandidateApplication.objects.filter(job=job)
+    selectedCandidate = SelectedCandidate.objects.filter(job=job)
+
+    return render(request, 'hr/candidate.html', {
+        'applications': applications,
+        'job': job,
+        'selectedCandidate': selectedCandidate
+    })
 
 
 @login_required
 def selectCandidate(request):
     if request.method == 'POST':
-        candidateid = request.POST.get('candidateid')
-        jobpostid = request.POST.get('jobpostid')
-        candidate = CandidateApplication.objects.get(id= candidateid)
-        # job = JobPost.objects.get(id = jobpostid)
-    #     SelectedCandidate(job=job,candidate=candidate).save()
-    #     return redirect('hr_dash')
-    # return redirect('hr_dash')  
+        candidateid_str = request.POST.get('candidateid')
+        jobpostid_str = request.POST.get('jobpostid')
 
-        # new code
-        jobpost = JobPost.objects.get(id = jobpostid)   
-        if SelectedCandidate.objects.filter(candidate=candidate).exists()==False:
-            SelectedCandidate(job=jobpost,candidate=candidate).save()
-            isSortList(user=candidate.user,job=jobpost).save() 
-        # return redirect(f'/candidate_details/{jobpostid}/') 
-        # return redirect('candidate_details')
-        return redirect('/candidate_details/'+str(jobpostid)+"/")
+        try:
+            candidate = get_object_or_404(CandidateApplication, id=candidateid_str)
+            jobpost = get_object_or_404(JobPost, id=jobpostid_str)
+        except (ValueError, TypeError):
+            return redirect('hr_dash')
+
+        if not SelectedCandidate.objects.filter(candidate=candidate).exists():
+            # Create a new SelectedCandidate entry
+            SelectedCandidate(job=jobpost, candidate=candidate).save()
+            
+            # --- This is the new, crucial code to update the status ---
+            candidate.status = 'selected'
+            candidate.save()
+            # --------------------------------------------------------
+
+            isSortList(user=candidate.user, job=jobpost).save()
+
+        # Corrected redirect using the 'reverse' function
+        return redirect(reverse('candidate_details', kwargs={'pk': jobpost.id}))
+    
     return redirect('hr_dash')
-        
     
 
 
 @login_required
 def deleteCandidate(request):
     if request.method == 'POST':
-        candidateid = request.POST.get('candidateid')
-        jobpostid = request.POST.get('jobpostid')
-        job = JobPost.objects.get(id = jobpostid)
-        CandidateApplication.objects.get(id= candidateid).delete()
-        job.applycount = job.applycount -1
+        candidateid_str = request.POST.get('candidateid')
+        jobpostid_str = request.POST.get('jobpostid')
+        
+        try:
+            # Use get_object_or_404 for safer object retrieval
+            candidate = get_object_or_404(CandidateApplication, id=candidateid_str)
+            job = get_object_or_404(JobPost, id=jobpostid_str)
+        except (ValueError, TypeError):
+            # Handles cases where the ID is not a number
+            return redirect('hr_dash')
+            
+        candidate.delete()
+        job.applycount = job.applycount - 1
         job.save()
 
     return redirect('hr_dash')

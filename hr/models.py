@@ -25,11 +25,12 @@ STATUS_CHOICES = (
 
 class CandidateApplication(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    job = models.OneToOneField(to=JobPost, on_delete=models.CASCADE)
+    # Corrected the field to a ForeignKey
+    job = models.ForeignKey(to=JobPost, on_delete=models.CASCADE) 
     passingYear = models.IntegerField()
     yearOfExp = models.IntegerField(default=0)
     resume = models.FileField(upload_to='resume/')
-    status = models.CharField(choices = STATUS_CHOICES, max_length=20, default='pending')
+    status = models.CharField(choices=STATUS_CHOICES, max_length=20, default='pending')
 
     def __str__(self):
         return str(self.user.username)+" "+str(self.job.title)
@@ -37,5 +38,8 @@ class CandidateApplication(models.Model):
 class SelectedCandidate(models.Model):
     job = models.ForeignKey(to = JobPost, on_delete=models.CASCADE)
     candidate = models.OneToOneField(to = CandidateApplication, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.job.title)+" "+str(self.candidate.user.username)
    
     

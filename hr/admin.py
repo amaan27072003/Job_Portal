@@ -17,3 +17,4 @@ class CandidateApplicationAdmin(admin.ModelAdmin):
 @admin.register(models.SelectedCandidate)
 class SelectedCandidateAdmin(admin.ModelAdmin):
         list_display = ('id','job','candidate')
+

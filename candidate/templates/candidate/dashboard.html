@@ -141,6 +141,7 @@
   font-weight: bold;
   transition: background-color 0.3s;
   margin-top: 40%;
+
 }
 
 .apply-button:hover {
@@ -172,12 +173,11 @@
             <span class="job-location" >{{job.address}}</span>
           </div>
           <div class="job-details">
-            <p>Company: {{job.compnayName}}</p>
+            <p>Company: {{job.companyName}}</p>
             <p>Salary: ${{job.salaryLow}} - ${{job.salaryHigh}}</p>
             <p>Last Date: {{job.lastDateToApply}}</p>
           </div>
-          <button class="apply-button"><a href="{% url 'applyforjob' job.id %}" style="text-decoration: none;
-            color: inherit;">Apply Now</a></button>
+          <button class="apply-button"><a href="{% url 'applyforjob' job.id %}" style="text-decoration: none;color: inherit;">Apply Now</a></button>
         </div>
       {% endfor %}
         <!-- Add more job cards here -->

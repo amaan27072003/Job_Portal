@@ -25,13 +25,12 @@ SECRET_KEY = 'django-insecure-_p00nk_!k8e!aet*32i8r7u#$b_dy%xm78)9a@jsbzfquw*bxo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['job-portal-tz8n.vercel.app', 'job-portal-tz8n-jf4f9ipop-amaan-ansaris-projects-a84724dc.vercel.app']
+ALLOWED_HOSTS = []
 
 
 # Application definition
 
-INSTALLED_APPS = [
-    'whitenoise.runserver_nostatic',  # For serving static files in development
+INSTALLED_APPS = [ 
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,8 +43,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # For serving static files 
+    'django.middleware.security.SecurityMiddleware', 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -77,6 +75,7 @@ WSGI_APPLICATION = 'jobforme.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+
 
 DATABASES = {
     'default': {
